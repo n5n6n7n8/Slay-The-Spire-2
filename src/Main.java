@@ -19,18 +19,16 @@ public class Main {
         EnemyList enemyList = new EnemyList();
         Enemy enemy = enemyList.getEnemy(2);
         Player player = new Player(enemy);
-        ActionList actionList = new ActionList(player, enemy);
-        enemy.addActionToEnemy(actionList.getAction(2));
         player.gainCardT(1);
         player.gainCardT(1);
-        player.gainCardT(10);
+        player.gainCardT(4);
         player.gainCardT(2);
         player.gainCardT(2);
-        player.gainCardT(20);
+        player.gainCardT(13);
         player.gainCardT(5);
-        player.gainCardT(11);
-        player.resetGame(enemy);
-        BattleUI x = new BattleUI(player);
+        player.gainCardT(14);
+
+        BattleUI battleUI = new BattleUI(player, enemy);
 
     }
 }

@@ -10,7 +10,7 @@ public class RoomChoiceUI {
     Player player;
     int enemyChoice;
     public RoomChoiceUI(Player player){
-        enemyChoice = (int) (Math.random()*7)+1;
+        enemyChoice = (int) (Math.random()*7)+1; //chooses an enemy
         this.player = player;
 
 
@@ -51,10 +51,7 @@ public class RoomChoiceUI {
             public void actionPerformed(ActionEvent ae) {
                 EnemyList enemyList = new EnemyList();
                 Enemy enemy = EnemyList.getEnemy(enemyChoice);
-                ActionList actionList = new ActionList(player, enemy);
-                enemy.addActionToEnemy(actionList.getAction(enemyChoice));
-                player.resetGame(enemy);
-                BattleUI x = new BattleUI(player);
+                BattleUI x = new BattleUI(player, enemy);
                 mainScene.setVisible(false);
                 mainScene.dispose();
             }
@@ -64,19 +61,19 @@ public class RoomChoiceUI {
     }
 
     public static void main(String[] args) {
-        EnemyList enemyList = new EnemyList();
-        Enemy enemy = enemyList.getEnemy(2);
-        Player player = new Player(enemy);
-
-        player.gainCardT(1);
-        player.gainCardT(1);
-        player.gainCardT(4);
-        player.gainCardT(2);
-        player.gainCardT(2);
-        player.gainCardT(13);
-        player.gainCardT(5);
-        player.gainCardT(14);
-
-        RoomChoiceUI roomChoiceUI = new RoomChoiceUI(player);
+//        EnemyList enemyList = new EnemyList();
+//        Enemy enemy = enemyList.getEnemy(2);
+//        Player player = new Player(enemy);
+//
+//        player.gainCardT(1);
+//        player.gainCardT(1);
+//        player.gainCardT(4);
+//        player.gainCardT(2);
+//        player.gainCardT(2);
+//        player.gainCardT(13);
+//        player.gainCardT(5);
+//        player.gainCardT(14);
+//
+//        RoomChoiceUI roomChoiceUI = new RoomChoiceUI(player);
     }
 }

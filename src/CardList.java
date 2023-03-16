@@ -86,7 +86,7 @@ public class CardList {
             }
         }));
         allCards.add(new Card("Rampart", CardType.BLOCK, "Gain 12 block", 2, e -> {
-            if(player.getEnergy()>=1){
+            if(player.getEnergy()>=2){
                 player.gainBlock(12);
                 player.gainSoul(1);
             }

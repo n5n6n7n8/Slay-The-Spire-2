@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.*;
 public class Player {
     private ArrayList<Card> trueDeck;
@@ -8,7 +9,6 @@ public class Player {
     private boolean isDead;
     private CardType immunity;
     private CardType weakness;
-    private Enemy enemy;
 
     private int maxEnergy;
     private int energy;
@@ -43,6 +43,7 @@ public class Player {
     //Constructors
     public Player(Enemy e){
         trueDeck = new ArrayList<Card>(); //will change
+
         deck = (ArrayList<Card>) trueDeck.clone(); //https://howtodoinjava.com/java/collections/arraylist/arraylist-clone-deep-copy/
 
         cardEncyclopedia = new CardList(this, e);
@@ -55,7 +56,7 @@ public class Player {
         shepardTone = false;
 
 
-        maxEnergy = 4;
+        maxEnergy = 3;
         energy = maxEnergy;
 
         drawSize = 5;
@@ -70,8 +71,6 @@ public class Player {
         critChance = 12;
         critDmg = 0;
         fragile = 0;
-
-        enemy = e;
     }
     //Health Methods
     public int getCurrentHealth(){
@@ -83,7 +82,7 @@ public class Player {
     public void loseHealth(int toLose){
         int x = toLose;
         x = (int) (x*(1+(0.20*fragile)));
-        x += enemy.getStrength();
+        //what if enemy has strength?
         x-=block;
         if(x<0){
             x=0;
@@ -135,8 +134,35 @@ public class Player {
         return gold;
     }
 
+    public void receiveAction(Action a){
+        switch(a.actionType){
+            case LOSE_HEALTH:
+                loseHealth(a.value);
+                break;
+            case INFLICT_POISON:
+                gainPoison(a.value);
+                break;
+            default:
+                break;
+        }
+        if(a.isDual){
+            switch(a.actionType2){
+                case LOSE_HEALTH:
+                    loseHealth(a.value2);
+                    break;
+                case INFLICT_POISON:
+                    gainPoison(a.value2);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     //Update each turn method
     public void nextTurn() {
+        //recieve enemy action
+        //calculate what to do
         turnNumber++;
         energy = maxEnergy;
         if(!willKeepBlock){
@@ -145,7 +171,7 @@ public class Player {
         else{
             willKeepBlock = false;
         }
-        loseHealth(poison);
+        loseHealthRaw(getPoison());
         if(poison<0){
             poison--;
         }
@@ -158,7 +184,6 @@ public class Player {
             loseHealthRaw(1);
         }
         if(boomerangCounter>0){
-            enemy.loseHealthRaw(6);
             boomerangCounter--;
         }
         if(misery>0){
@@ -167,27 +192,27 @@ public class Player {
         }
     }
     public void resetGame(Enemy e){//reset game for new battle
+        cardEncyclopedia = new CardList(this, e);
         currentHealth+=2;
-        deck = (ArrayList<Card>) trueDeck.clone();
+
         energy = maxEnergy;
         poison = 0;
         block = 0;
         soul = 0;
         strength = 0;
-        enemy = e;
         critDmg = 0;
-        cardEncyclopedia = new CardList(this, e);
+
 
         //statuses
         willKeepBlock = false;
         boomerangCounter = 0;
         infiniteGunDMG = 5;
         pileOShields = 4;
-
         trueDeck = new ArrayList<Card>();
         for (int i = 0; i < trueDeckIndexes.size(); i++) {
             trueDeck.add(cardEncyclopedia.getCard(trueDeckIndexes.get(i)));
         }
+        deck = (ArrayList<Card>) trueDeck.clone();
     }
 
     //STATUSES
@@ -396,8 +421,5 @@ public class Player {
             }
         }
         return toReturn;
-    }
-    public Enemy getEnemy(){
-        return enemy;
     }
 }

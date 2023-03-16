@@ -12,22 +12,20 @@ public class BattleUI {
     JFrame mainScene;
     JPanel centerScene, northScene, southScene, westScene, eastScene,
             infoBRow, cardsRow, playerPanel, enemyPanel, playerUIPanel, enemyUIPanel, pBlockPanel, eBlockPanel, pEnergyPanel;
-    JLabel infoLabel, cardsLabel, playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus, heartPicture;
+    JLabel infoLabel, cardsLabel, playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus;
     JButton usePowerB, exitB, nextTurnB;
     JProgressBar playerHealthBar, enemyHealthBar;
     Player player;
     Enemy enemy;
     BufferedImage heartImage, blockImage, energyImage;
 
-    public BattleUI(Player p) { //CREATE PLAYER AND ENEMY VARIOABLES UP HERE^^ TO REFERENCE INSTEAD OF USAGE IN ARGUMENBTS
+    public BattleUI(Player p, Enemy ee) { //CREATE PLAYER AND ENEMY VARIOABLES UP HERE^^ TO REFERENCE INSTEAD OF USAGE IN ARGUMENBTS
         player = p;
-        enemy = player.getEnemy();
-        player.resetGame(enemy);
+        enemy = ee;
+        p.resetGame(ee);
         mainScene = new JFrame("Battle Scene"); //Main Scene
         mainScene.setPreferredSize(new Dimension(800, 500));
         mainScene.pack();
-
-
         centerScene = new JPanel(); //Panels on all areas of MainScene
         centerScene.setLayout(new BorderLayout());
         mainScene.add(centerScene, BorderLayout.CENTER);
@@ -83,32 +81,49 @@ public class BattleUI {
 
         nextTurnB = new JButton("End Turn");
         nextTurnB.setForeground(new Color(210, 50, 50));
+//        nextTurnB.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent ae) {
+//                if(player.checkIfDead()){
+//                    FailUI failUI = new FailUI();
+//                    mainScene.setVisible(false);
+//                    mainScene.dispose();
+//                }
+//                player.nextTurn();
+//                if(player.checkIfDead()){
+//                    FailUI failUI = new FailUI();
+//                    mainScene.setVisible(false);
+//                    mainScene.dispose();
+//                }
+//                updateEntities();
+//            }
+//        });
         nextTurnB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                enemy.nextTurn();
+                if(enemy.checkIfDead()){
+                    RewardUI rewardUI = new RewardUI(player);
+                    enemy.gainHealth(1000);
+                    mainScene.setVisible(false);
+                    mainScene.dispose();
+                }
+                Action a = enemy.action(); //right now, generate action, do appropriate effects on player and enemy
+                player.receiveAction(a);
+                enemy.receiveAction(a);
                 if(player.checkIfDead()){
                     FailUI failUI = new FailUI();
+                    enemy.gainHealth(1000);
                     mainScene.setVisible(false);
                     mainScene.dispose();
                 }
                 player.nextTurn();
                 if(player.checkIfDead()){
                     FailUI failUI = new FailUI();
-                    mainScene.setVisible(false);
-                    mainScene.dispose();
-                }
-                updateEntities();
-            }
-        });
-        nextTurnB.addActionListener(enemy.getAction());
-        nextTurnB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                enemy.nextTurn();
-                if(enemy.checkIfDead()){
-                    RewardUI rewardUI = new RewardUI(player);
+                    enemy.gainHealth(1000);
                     mainScene.setVisible(false);
                     mainScene.dispose();
                 }
                 setUpCards();
+                updateEntities();
             }
         });
 
@@ -320,8 +335,10 @@ public class BattleUI {
                     }
                     if(enemy.checkIfDead()){
                         RewardUI rewardUI = new RewardUI(player);
+                        enemy.gainHealth(1000);
                         mainScene.setVisible(false);
                         mainScene.dispose();
+                        return;
                     }
                     player.trySoulChance();
                 }
@@ -351,7 +368,6 @@ public class BattleUI {
         EnemyList enemyList = new EnemyList();
         Enemy enemy = enemyList.getEnemy(2);
         Player player = new Player(enemy);
-
         player.gainCardT(1);
         player.gainCardT(1);
         player.gainCardT(4);
@@ -361,6 +377,6 @@ public class BattleUI {
         player.gainCardT(5);
         player.gainCardT(14);
 
-        BattleUI battleUI = new BattleUI(player);
+        BattleUI battleUI = new BattleUI(player, enemy);
     }
 }

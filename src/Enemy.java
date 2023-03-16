@@ -1,13 +1,11 @@
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-public class Enemy {
+public abstract class Enemy {
     private int maxHealth;
     private int currentHealth;
     private boolean isDead;
     private String name;
     private ArrayList<CardType> immunity = new ArrayList<>();
     private ArrayList<CardType> weakness = new ArrayList<>();
-    private ActionListener action;
 
     //status effect variables
     private int block = 0;
@@ -60,11 +58,34 @@ public class Enemy {
         immunity.add(i);
         weakness.add(w);
     }
-    public void addActionToEnemy(EnemyAction enemyAction){
-        action = enemyAction.getAction();
-    }
-    public ActionListener getAction(){
-        return action;
+
+    public abstract Action action();
+
+    public void receiveAction(Action a){
+        switch(a.actionType){
+            case GAIN_HEALTH:
+                gainHealth(a.value);
+                break;
+            case GAIN_BLOCK:
+                gainBlock(a.value);//will add more once more enemies are coded
+                break;
+            case GAIN_STRENGTH:
+                gainStrength(a.value);
+            default:
+        }
+        if(a.isDual){
+            switch(a.actionType2){
+                case GAIN_HEALTH:
+                    gainHealth(a.value2);
+                    break;
+                case GAIN_BLOCK:
+                    gainBlock(a.value2);//will add more once more enemies are coded
+                    break;
+                case GAIN_STRENGTH:
+                    gainStrength(a.value2);
+                default:
+            }
+        }
     }
 
     //CARD TYPE
@@ -194,7 +215,7 @@ public class Enemy {
             isDead = true;
         }
         if(x>maxHealth){
-            maxHealth=x;
+            currentHealth = maxHealth;
         }
     }
     public String getName(){
@@ -212,6 +233,7 @@ public class Enemy {
 
     public void nextTurn(){
         block = 0;
+        loseHealthRaw(poison);
         if(poison<0){
             poison--;
         }
@@ -230,10 +252,9 @@ public class Enemy {
             }
             chargedCreeper--;
         }
-
         //poison decrease
         //block erase
         //relic stuff
     }
-
 }
+

@@ -1,17 +1,32 @@
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class FailUI {
     JFrame mainScene;
     JPanel anotherPanel;
     JLabel label;
     JButton tryAgain;
+    BufferedImage picture;
     public FailUI(){
         mainScene = new JFrame("You died!");
         mainScene.setPreferredSize(new Dimension(300, 200));
         mainScene.pack();
         anotherPanel = new JPanel();
+
+        picture = null;
+        try { //https://www.w3schools.com/java/java_try_catch.asp
+            picture = ImageIO.read(new File("src/CS StS art/dog.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Image dogPicture = picture.getScaledInstance(140, 140, Image.SCALE_DEFAULT); //https://mkyong.com/java/how-to-resize-an-image-in-java/
+        anotherPanel.add(new JLabel(new ImageIcon(dogPicture)));
 
         label = new JLabel("<html>"+ "You died!" + "</html>", JLabel.CENTER);
         label.setFont(new Font("Chicago", Font.BOLD, 14));
@@ -21,8 +36,6 @@ public class FailUI {
                 EnemyList enemyList = new EnemyList();
                 Enemy enemy = enemyList.getEnemy(2);
                 Player player = new Player(enemy);
-                ActionList actionList = new ActionList(player, enemy);
-                enemy.addActionToEnemy(actionList.getAction(2));
                 player.gainCardT(1);
                 player.gainCardT(1);
                 player.gainCardT(10);
@@ -31,8 +44,7 @@ public class FailUI {
                 player.gainCardT(20);
                 player.gainCardT(5);
                 player.gainCardT(11);
-                player.resetGame(enemy);
-                BattleUI x = new BattleUI(player);
+                BattleUI x = new BattleUI(player, enemy);
             }
         });
         anotherPanel.add(tryAgain);

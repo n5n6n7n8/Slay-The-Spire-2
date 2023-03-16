@@ -35,7 +35,6 @@ Poison decreases by 1 each turn.
 Fragile - This means lower defense. The more fragile the player or enemy has, the more damage they receive.
 
 FILE DESCRIPTIONS
--ActionList: a list that holds all the Action objects that are assigned to enemies.
 -BattleUI: sets up the UI for the main battle scene.
 -Card: a class that describes a Card object, containing the name, description, cost, actionlisteners, getters, and setters.
 -CardList: a list of all the gainable cards in the game.

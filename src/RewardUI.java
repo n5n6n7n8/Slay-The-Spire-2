@@ -93,11 +93,11 @@ public class RewardUI {
     }
 
     public static void main(String[] args) {
-        EnemyList enemyList = new EnemyList();
-        Enemy enemy = enemyList.getEnemy(2);
-        Player player = new Player(enemy);
-
-        RewardUI x = new RewardUI(player);
+//        EnemyList enemyList = new EnemyList();
+//        Enemy enemy = enemyList.getEnemy(2);
+//        Player player = new Player(enemy);
+//
+//        RewardUI x = new RewardUI(player);
     }
 }
 
