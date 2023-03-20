@@ -12,8 +12,8 @@ public class BattleUI {
     JFrame mainScene;
     JPanel centerScene, northScene, southScene, westScene, eastScene,
             infoBRow, cardsRow, playerPanel, enemyPanel, playerUIPanel, enemyUIPanel, pBlockPanel, eBlockPanel, pEnergyPanel;
-    JLabel infoLabel, cardsLabel, playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus;
-    JButton usePowerB, exitB, nextTurnB;
+    JLabel infoLabel, playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus;
+    JButton showDrawB, showDiscardB, exitB, nextTurnB;
     JProgressBar playerHealthBar, enemyHealthBar;
     Player player;
     Enemy enemy;
@@ -44,10 +44,10 @@ public class BattleUI {
         northScene.add(infoLabel);
         infoBRow = new JPanel();//Row of buttons
         infoBRow.setLayout(new BoxLayout(infoBRow, BoxLayout.X_AXIS));
-        usePowerB = new JButton("Show Deck");
-        usePowerB.addActionListener(new ActionListener() {
+        showDrawB = new JButton("Show Draw Pile");
+        showDrawB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                JFrame cardMap = new JFrame("Here are your current cards"); //Main Scene
+                JFrame cardMap = new JFrame("Draw Pile:"); //Main Scene
                 cardMap.setPreferredSize(new Dimension(300, 500));
                 cardMap.pack();
 
@@ -58,7 +58,7 @@ public class BattleUI {
                 });
                 cardMap.add(closeButton, BorderLayout.NORTH);
 
-                JLabel cardsText = new JLabel(player.getDeckString(), JLabel.CENTER);
+                JLabel cardsText = new JLabel(player.getDrawString(), JLabel.CENTER);
                 cardMap.add(cardsText, BorderLayout.CENTER);
 
 
@@ -66,37 +66,42 @@ public class BattleUI {
                 cardMap.setVisible(true);
             }
         });
-        infoBRow.add(usePowerB);
+        showDiscardB = new JButton("Show Discard Pile");
+        showDiscardB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                JFrame cardMap = new JFrame("Discard Pile"); //Main Scene
+                cardMap.setPreferredSize(new Dimension(300, 500));
+                cardMap.pack();
+
+                JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(ae1 -> {
+                    cardMap.setVisible(false);
+                    cardMap.dispose();
+                });
+                cardMap.add(closeButton, BorderLayout.NORTH);
+
+                JLabel cardsText = new JLabel(player.getDiscardString(), JLabel.CENTER);
+                cardMap.add(cardsText, BorderLayout.CENTER);
+
+                cardMap.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                cardMap.setVisible(true);
+            }
+        });
+
+        infoBRow.add(showDrawB);
+        infoBRow.add(showDiscardB);
+
         exitB = new JButton("Exit Game");
         infoBRow.add(exitB);
 
         northScene.add(infoBRow);
 
         //SOUTH SCENE
-        cardsLabel = new JLabel("Cards");//label
-        cardsLabel.setFont(new Font("Zapfino", Font.BOLD,20));
-        southScene.add(cardsLabel);
         cardsRow = new JPanel();//row of cards
         cardsRow.setLayout(new BoxLayout(cardsRow, BoxLayout.X_AXIS));
 
         nextTurnB = new JButton("End Turn");
         nextTurnB.setForeground(new Color(210, 50, 50));
-//        nextTurnB.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent ae) {
-//                if(player.checkIfDead()){
-//                    FailUI failUI = new FailUI();
-//                    mainScene.setVisible(false);
-//                    mainScene.dispose();
-//                }
-//                player.nextTurn();
-//                if(player.checkIfDead()){
-//                    FailUI failUI = new FailUI();
-//                    mainScene.setVisible(false);
-//                    mainScene.dispose();
-//                }
-//                updateEntities();
-//            }
-//        });
         nextTurnB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 enemy.nextTurn();
@@ -329,9 +334,10 @@ public class BattleUI {
             public void actionPerformed(ActionEvent ae) {
                 if(c.getCost()<=player.getEnergy()){
                     cardsRow.remove(cardPanel);
+                    player.addToDiscard(c);
                     player.gainEnergy(c.getCost()*-1);
                     if(c.getCanExhaust()){
-                        player.loseCard(c);
+                        player.loseCardDiscard(c);
                     }
                     if(enemy.checkIfDead()){
                         RewardUI rewardUI = new RewardUI(player);
@@ -355,10 +361,9 @@ public class BattleUI {
 
     public void setUpCards() {
         cardsRow.removeAll();
-        ArrayList<Card> toDraw = player.drawCards();
-        for (int i = 0; i < toDraw.size(); i++) {
-            Card current = toDraw.get(i);
-            JPanel x = createCardPanel(current);
+        ArrayList<Card> hand = player.hand;
+        for (int i = 0; i < hand.size(); i++) {
+            JPanel x = createCardPanel(hand.get(i));
             cardsRow.add(x);
             cardsRow.add(Box.createRigidArea(new Dimension(5, 0))); //https://stackoverflow.com/questions/8335997/how-can-i-add-a-space-in-between-two-buttons-in-a-boxlayout
         }

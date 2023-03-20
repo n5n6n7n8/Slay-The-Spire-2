@@ -27,6 +27,8 @@ public class Main {
         player.gainCardT(13);
         player.gainCardT(5);
         player.gainCardT(14);
+        player.gainCardT(15);
+        player.gainCardT(16);
 
         BattleUI battleUI = new BattleUI(player, enemy);
 
@@ -42,5 +44,16 @@ class ListJavaFonts {
             System.out.println(fonts[i]);
         }
     }
+}
+class valueTesting{
+    public static void main(String[] args) {
+        for (int i = 0; i < 20; i++) {
+            int x = 0;
+            x += (int) (Math.random()*6)+1;
+            x += (int) (Math.random()*6)+1;
+            x += (int) (Math.random()*6)+1;
+            System.out.println(x + "\n");
+        }
 
+    }
 }

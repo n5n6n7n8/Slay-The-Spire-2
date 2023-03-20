@@ -15,7 +15,7 @@ public class FailUI {
     BufferedImage picture;
     public FailUI(){
         mainScene = new JFrame("You died!");
-        mainScene.setPreferredSize(new Dimension(300, 200));
+        mainScene.setPreferredSize(new Dimension(400, 300));
         mainScene.pack();
         anotherPanel = new JPanel();
 
@@ -25,7 +25,7 @@ public class FailUI {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Image dogPicture = picture.getScaledInstance(140, 140, Image.SCALE_DEFAULT); //https://mkyong.com/java/how-to-resize-an-image-in-java/
+        Image dogPicture = picture.getScaledInstance(200, 180, Image.SCALE_DEFAULT); //https://mkyong.com/java/how-to-resize-an-image-in-java/
         anotherPanel.add(new JLabel(new ImageIcon(dogPicture)));
 
         label = new JLabel("<html>"+ "You died!" + "</html>", JLabel.CENTER);

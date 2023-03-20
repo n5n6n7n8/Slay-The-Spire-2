@@ -1,9 +1,11 @@
-import java.awt.*;
 import java.util.*;
 public class Player {
     private ArrayList<Card> trueDeck;
-    private ArrayList<Card> deck;
+    public ArrayList<Card> hand;
+    public ArrayList<Card> drawPile;
+    public ArrayList<Card> discardPile;
     private ArrayList<Integer> trueDeckIndexes = new ArrayList<>();
+
     private int maxHealth;
     private int currentHealth;
     private boolean isDead;
@@ -43,9 +45,9 @@ public class Player {
     //Constructors
     public Player(Enemy e){
         trueDeck = new ArrayList<Card>(); //will change
-
-        deck = (ArrayList<Card>) trueDeck.clone(); //https://howtodoinjava.com/java/collections/arraylist/arraylist-clone-deep-copy/
-
+        //https://howtodoinjava.com/java/collections/arraylist/arraylist-clone-deep-copy/
+        discardPile = new ArrayList<>();
+        hand = new ArrayList<>();
         cardEncyclopedia = new CardList(this, e);
         maxHealth = 60;
         currentHealth = 54;
@@ -161,6 +163,13 @@ public class Player {
 
     //Update each turn method
     public void nextTurn() {
+        int s = hand.size();
+        for (int i = 0; i < s; i++) {
+            System.out.println("ADDING HAND tO DISCARD " + hand.size());
+            discardPile.add(hand.remove(0));
+        }
+        System.out.println("Hand size: " + hand.size());
+        drawCards();
         //recieve enemy action
         //calculate what to do
         turnNumber++;
@@ -202,7 +211,6 @@ public class Player {
         strength = 0;
         critDmg = 0;
 
-
         //statuses
         willKeepBlock = false;
         boomerangCounter = 0;
@@ -212,7 +220,10 @@ public class Player {
         for (int i = 0; i < trueDeckIndexes.size(); i++) {
             trueDeck.add(cardEncyclopedia.getCard(trueDeckIndexes.get(i)));
         }
-        deck = (ArrayList<Card>) trueDeck.clone();
+       //https://howtodoinjava.com/java/collections/arraylist/arraylist-clone-deep-copy/
+        drawPile = (ArrayList<Card>) trueDeck.clone();
+        Collections.shuffle(drawPile);
+        drawCards();
     }
 
     //STATUSES
@@ -334,26 +345,51 @@ public class Player {
     }
 
     //regular deck methods. These are for referencing the deck in battle, as the cards in battle can be added or removed, but never permanently.
-    public void gainCard(int index){
-        deck.add(cardEncyclopedia.getCard(index));
+    public void gainCardDraw(int index){
+        drawPile.add(cardEncyclopedia.getCard(index));
     }
-    public void gainCard(Card c){
-        deck.add(cardEncyclopedia.getCard(c));
+    public void gainCardHand(int index){
+        hand.add(cardEncyclopedia.getCard(index));
     }
-    public Card loseCard(Card toRemove){
-        for (int i = 0; i < deck.size(); i++) {
-            if(toRemove.equals(deck.get(i))){
-                return deck.remove(i);
+    public void gainCardDiscard(int index){
+        discardPile.add(cardEncyclopedia.getCard(index));
+    }
+    public void gainCardDraw(Card c){
+        drawPile.add(cardEncyclopedia.getCard(c));
+    }
+    public Card loseCardDiscard(Card toRemove){
+        for (int i = 0; i < discardPile.size(); i++) {
+            if(toRemove.equals(discardPile.get(i))){
+                return discardPile.remove(i);
             }
         }
         return null;
     }
-    public Card loseCard(int i){
-        if(i<deck.size()) {
-            return deck.remove(i);
+    public Card loseCardHand(Card toRemove){
+        for (int i = 0; i < hand.size(); i++) {
+            if(toRemove.equals(hand.get(i))){
+                return hand.remove(i);
+            }
+        }
+        //hand.removeIf(toLook -> toLook.equals(toRemove)); //intelliJ autocorrect
+        return null;
+    }
+    public Card loseCardDraw(Card toRemove){
+        for (int i = 0; i < drawPile.size(); i++) {
+            if(toRemove.equals(drawPile.get(i))){
+                return drawPile.remove(i);
+            }
         }
         return null;
     }
+    public Card loseCardDraw(int i){
+        if(i<drawPile.size()) {
+            return drawPile.remove(i);
+        }
+        return null;
+    }
+
+
     public Card getCard(Card a){
         for (int i = 0; i < trueDeck.size(); i++) {
             if(a.equals(trueDeck.get(i))){
@@ -371,13 +407,26 @@ public class Player {
     public ArrayList<Card> getTrueDeck(){
         return trueDeck;
     }
-    public ArrayList<Card> getDeck(){
-        return deck;
+    public ArrayList<Card> getDraw(){
+        return drawPile;
     }
-    public String getDeckString(){
+    public ArrayList<Card> getDiscardPile(){
+        return discardPile;
+    }
+    public String getDrawString(){
         String toReturn = "<html>";
-        for (int i = 0; i < deck.size(); i++) { //https://stackoverflow.com/questions/7447691/is-there-any-multiline-jlabel-option
-            toReturn+=deck.get(i);
+        for (int i = 0; i < drawPile.size(); i++) { //https://stackoverflow.com/questions/7447691/is-there-any-multiline-jlabel-option
+            toReturn+=drawPile.get(i);
+            toReturn+=" <br> ";
+            toReturn+=" <br> ";
+        }
+        toReturn +="</html>";
+        return toReturn;
+    }
+    public String getDiscardString(){
+        String toReturn = "<html>";
+        for (int i = 0; i < discardPile.size(); i++) { //https://stackoverflow.com/questions/7447691/is-there-any-multiline-jlabel-option
+            toReturn+=discardPile.get(i);
             toReturn+=" <br> ";
             toReturn+=" <br> ";
         }
@@ -394,32 +443,44 @@ public class Player {
 
     public int countCardsByType(CardType c){
         int count = 0;
-        for (int i = 0; i < deck.size(); i++) {
-            if(deck.get(i).getType()==c){
+        for (int i = 0; i < drawPile.size(); i++) {
+            if(drawPile.get(i).getType()==c){
+                count++;
+            }
+        }
+        for (int i = 0; i < discardPile.size(); i++) {
+            if(discardPile.get(i).getType()==c){
+                count++;
+            }
+        }
+        for (int i = 0; i < hand.size(); i++) {
+            if(hand.get(i).getType()==c){
                 count++;
             }
         }
         return count;
     }
 
-    public ArrayList<Card> shuffleDeck(){
-        ArrayList<Card> toShuffle = (ArrayList<Card>) deck.clone();
-        Collections.shuffle(toShuffle);
-        return toShuffle;
+    public void addToDiscard(Card c){
+        loseCardHand(c);
+        discardPile.add(c);
     }
     public ArrayList<Card> drawCards(){
-        ArrayList<Card> shuffled = shuffleDeck();
-        ArrayList<Card> toReturn = new ArrayList<Card>();
-        int j = 0;
-        for (int i = 0; i < shuffled.size(); i++) {
-            if(j<drawSize){
-                toReturn.add(shuffled.get(i));
-                j++;
-            }
-            else{
-                break;
+        if(drawSize>drawPile.size()){
+            reShuffle();
+        }
+        for (int i = 0; i < drawSize; i++) {
+            if(!drawPile.isEmpty()){
+                hand.add(drawPile.remove(0));
             }
         }
-        return toReturn;
+        return hand;
+    }
+    public void reShuffle(){
+        Collections.shuffle(discardPile);
+        int s = discardPile.size();
+        for (int i = 0; i < s; i++) {
+            drawPile.add(discardPile.remove(0));
+        }
     }
 }

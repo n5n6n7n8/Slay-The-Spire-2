@@ -38,8 +38,8 @@ public class CardList {
                 enemy.loseHealth(12);
             }
         }));
-        allCards.add(new Card("Serrated Dice", CardType.ATTACK, "Deal random number (1-6) dmg three times", 3, e -> {
-            if(player.getEnergy()>=3){
+        allCards.add(new Card("Serrated Dice", CardType.ATTACK, "Deal random number (1-6) dmg three times", 2, e -> {
+            if(player.getEnergy()>=2){
                 int x = 0;
                 x += (int) (Math.random()*6)+1;
                 x += (int) (Math.random()*6)+1;
@@ -107,11 +107,12 @@ public class CardList {
                 player.gainBlock(player.countCardsByType(CardType.BLOCK));
             }
         }));
-        allCards.add(new Card("Bullet Time", CardType.BLOCK, "Gain 10 block and add 3 Kunais to your hand", 3, e -> {
+        allCards.add(new Card("Bullet Time", CardType.BLOCK, "Gain 13 block and add 3 Kunais to your hand", 3, e -> {
             if(player.getEnergy()>=3){
-                player.gainCard(8);
-                player.gainCard(8);
-                player.gainCard(8);
+                player.gainBlock(13);
+                player.gainCardDraw(8);
+                player.gainCardDraw(8);
+                player.gainCardDraw(8);
             }
         }));
         allCards.add(new Card("Hedgehog", CardType.BLOCK, "Deal 6 dmg and gain 6 block", 2, e -> {
@@ -197,9 +198,9 @@ public class CardList {
         allCards.add(new Card("The Silent", CardType.POISON, "Gain 1 soul. Add 3 Kunai to deck. Apply 5 poison", 4, e -> {
             if(player.getEnergy()>=4){
                 player.gainSoul(1);
-                player.gainCard(8);
-                player.gainCard(8);
-                player.gainCard(8);
+                player.gainCardDraw(8);
+                player.gainCardDraw(8);
+                player.gainCardDraw(8);
                 enemy.gainPoison(5);
             }
         }));
@@ -214,7 +215,7 @@ public class CardList {
         allCards.add(new Card("Ghost Note", CardType.HEAL, "Gain 2 soul. Add 1 ruler of everything to deck. Exhaust", 1, e -> {
             if(player.getEnergy()>=1){
                 player.gainSoul(2);
-                player.gainCard(72);
+                player.gainCardDraw(72);
             }
         }));
         allCards.add(new Card("Take Five", CardType.HEAL, "Heal 5, attack for 5, apply 5 fragile, apply 5 poison, gain 5 crit dmg. Costs 3 soul. Exhaust", 5, e -> {
@@ -312,13 +313,13 @@ public class CardList {
                 enemy.loseHealth(4, CardType.FRAGILE);
             }
         }));
-        allCards.add(new Card("Personal Attack", CardType.FRAGILE, "Apply 2 fragile. Add 2 Box Jellyfish to deck", 2, e -> {
-            if(player.getEnergy()>=2){
-                enemy.gainFragile(2);
-                player.gainCard(105);
-                player.gainCard(105);
-            }
-        }));
+//        allCards.add(new Card("Personal Attack", CardType.FRAGILE, "Apply 2 fragile. Add 2 Box Jellyfish to deck", 2, e -> {
+//            if(player.getEnergy()>=2){
+//                enemy.gainFragile(2);
+//                player.gainCardDraw(105);
+//                player.gainCardDraw(105);
+//            }
+//        }));
         allCards.add(new Card("Oh the Misery", CardType.FRAGILE, "Gain 11 block for 3 turns. Gain 4 fragile. Heal 1. Exhaust", 2, e -> {
             if(player.getEnergy()>=2){
                 player.gainFragile(4);
@@ -442,9 +443,9 @@ public class CardList {
         }));
         allCards.add(new Card("Exagryph", CardType.SOUL, "Add 3 Kunai to deck. Costs 2 Soul. Exhaust", 1, e -> {
             if(player.getEnergy()>=1){
-                player.gainCard(10);
-                player.gainCard(10);
-                player.gainCard(10);
+                player.gainCardDraw(10);
+                player.gainCardDraw(10);
+                player.gainCardDraw(10);
                 player.gainSoul(-2);
             }
         }));
