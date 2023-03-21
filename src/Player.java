@@ -50,7 +50,7 @@ public class Player {
         hand = new ArrayList<>();
         cardEncyclopedia = new CardList(this, e);
         maxHealth = 60;
-        currentHealth = 54;
+        currentHealth = 52;
         immunity = CardType.NONE;
         weakness = CardType.NONE;
 
@@ -165,10 +165,8 @@ public class Player {
     public void nextTurn() {
         int s = hand.size();
         for (int i = 0; i < s; i++) {
-            System.out.println("ADDING HAND tO DISCARD " + hand.size());
             discardPile.add(hand.remove(0));
         }
-        System.out.println("Hand size: " + hand.size());
         drawCards();
         //recieve enemy action
         //calculate what to do
@@ -228,10 +226,10 @@ public class Player {
 
     //STATUSES
     public String listStatuses(){
-        String toReturn = "Status Effects: ";
-        if(poison==0&&soul==0&&strength==0&&fragile==0){
-            return toReturn + "NONE";
-        }
+        String toReturn = " ";
+//        if(poison==0&&soul==0&&strength==0&&fragile==0){
+//            return toReturn + "NONE";
+//        }
         if(poison>0){
             toReturn+= "(" + poison + ") Poison,";
         }
@@ -245,6 +243,9 @@ public class Player {
             toReturn+= "(" + soul + ") Soul,";
         }
         return toReturn.substring(0, toReturn.length()-1);
+    }
+    public void gainMaxEnergy(int i){
+        maxEnergy+=i;
     }
     public void gainEnergy(int i){
         energy+=i;

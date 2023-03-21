@@ -29,6 +29,7 @@ public class Main {
         player.gainCardT(14);
         player.gainCardT(15);
         player.gainCardT(16);
+        player.gainCardT(17);
 
         BattleUI battleUI = new BattleUI(player, enemy);
 

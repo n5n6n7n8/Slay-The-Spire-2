@@ -12,19 +12,22 @@ public class BattleUI {
     JFrame mainScene;
     JPanel centerScene, northScene, southScene, westScene, eastScene,
             infoBRow, cardsRow, playerPanel, enemyPanel, playerUIPanel, enemyUIPanel, pBlockPanel, eBlockPanel, pEnergyPanel;
-    JLabel infoLabel, playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus;
+    JLabel playerUILabel, playerUILabel2, enemyUILabel, enemyUILabel2, pEnergy, pBlock, eBlock, pStatus, eStatus, enemyIntent;
     JButton showDrawB, showDiscardB, exitB, nextTurnB;
     JProgressBar playerHealthBar, enemyHealthBar;
     Player player;
     Enemy enemy;
-    BufferedImage heartImage, blockImage, energyImage;
+    BufferedImage blockImage, energyImage;
 
     public BattleUI(Player p, Enemy ee) { //CREATE PLAYER AND ENEMY VARIOABLES UP HERE^^ TO REFERENCE INSTEAD OF USAGE IN ARGUMENBTS
         player = p;
         enemy = ee;
         p.resetGame(ee);
+        enemy.setAction(enemy.generateAction());
         mainScene = new JFrame("Battle Scene"); //Main Scene
-        mainScene.setPreferredSize(new Dimension(800, 500));
+
+
+        mainScene.setPreferredSize(new Dimension(800, 600));
         mainScene.pack();
         centerScene = new JPanel(); //Panels on all areas of MainScene
         centerScene.setLayout(new BorderLayout());
@@ -40,16 +43,15 @@ public class BattleUI {
         mainScene.add(eastScene, BorderLayout.EAST);
 
         //NORTH SCENE
-        infoLabel = new JLabel("Info Bar");//title
-        northScene.add(infoLabel);
         infoBRow = new JPanel();//Row of buttons
         infoBRow.setLayout(new BoxLayout(infoBRow, BoxLayout.X_AXIS));
         showDrawB = new JButton("Show Draw Pile");
         showDrawB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 JFrame cardMap = new JFrame("Draw Pile:"); //Main Scene
-                cardMap.setPreferredSize(new Dimension(300, 500));
+                cardMap.setPreferredSize(new Dimension(500, 600));
                 cardMap.pack();
+                cardMap.getContentPane().setBackground(new Color(245, 241, 206));
 
                 JButton closeButton = new JButton("Close");
                 closeButton.addActionListener(ae1 -> {
@@ -70,8 +72,9 @@ public class BattleUI {
         showDiscardB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 JFrame cardMap = new JFrame("Discard Pile"); //Main Scene
-                cardMap.setPreferredSize(new Dimension(300, 500));
+                cardMap.setPreferredSize(new Dimension(500, 600));
                 cardMap.pack();
+                cardMap.getContentPane().setBackground(new Color(146, 192, 219));
 
                 JButton closeButton = new JButton("Close");
                 closeButton.addActionListener(ae1 -> {
@@ -111,7 +114,11 @@ public class BattleUI {
                     mainScene.setVisible(false);
                     mainScene.dispose();
                 }
-                Action a = enemy.action(); //right now, generate action, do appropriate effects on player and enemy
+                Action a = enemy.setAndGetAction(enemy.generateAction());//right now, generate action, do appropriate effects on player and enemy
+
+                enemyIntent.setIcon(enemy.getLabelOfAction());
+                enemyIntent.setText("("+enemy.getAction().value+")");
+
                 player.receiveAction(a);
                 enemy.receiveAction(a);
                 if(player.checkIfDead()){
@@ -216,6 +223,10 @@ public class BattleUI {
 
         enemyPanel.add(eBlockPanel);
 
+        enemyIntent = new JLabel(enemy.getLabelOfAction());
+        enemyIntent.setText("");
+        enemyPanel.add(enemyIntent);
+
 
         eStatus = new JLabel(enemy.listStatuses());
         enemyPanel.add(eStatus);
@@ -236,26 +247,14 @@ public class BattleUI {
         playerUILabel.setFont(new Font("Chicago", Font.BOLD,13));
         playerUILabel2 = new JLabel("(x/x)");
 
-        //https://stackoverflow.com/questions/299495/how-to-add-an-image-to-a-jpanel
-        heartImage = null;
-        try { //https://www.w3schools.com/java/java_try_catch.asp
-            heartImage = ImageIO.read(new File("src/CS StS art/Hearlth_icon.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Image newHeartImage = heartImage.getScaledInstance(16, 16, Image.SCALE_DEFAULT); //https://mkyong.com/java/how-to-resize-an-image-in-java/
-        JLabel heartPicLabel = new JLabel(new ImageIcon(newHeartImage));
         playerUIPanel.add(playerUILabel);
-        playerUIPanel.add(heartPicLabel);
         playerUIPanel.add(playerUILabel2);
 
 
         //https://www.geeksforgeeks.org/java-swing-jprogressbar/
         playerHealthBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, player.getMaxHealth());//ProgBar
         playerHealthBar.setValue(player.getCurrentHealth());
-        playerHealthBar.setForeground(Color.red);
         playerUIPanel.add(playerHealthBar);
-
 
 
         centerScene.add(playerUIPanel, BorderLayout.WEST);
@@ -266,9 +265,6 @@ public class BattleUI {
         enemyUILabel = new JLabel("Enemy UI");
         enemyUILabel.setFont(new Font("Chicago", Font.BOLD,13));
         enemyUIPanel.add(enemyUILabel);
-
-        JLabel heartPicLabel2 = new JLabel(new ImageIcon(newHeartImage));
-        enemyUIPanel.add(heartPicLabel2);
 
         enemyUILabel2 = new JLabel("");
         enemyUIPanel.add(enemyUILabel2);
@@ -316,7 +312,7 @@ public class BattleUI {
         eStatus.setText("<html>" + enemy.listStatuses() + "</html>");
     }
 
-    public JPanel createCardPanel(Card c){
+    public JPanel createCardPanel(Card c, boolean usable){
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setPreferredSize(new Dimension(100, 190));
@@ -328,31 +324,32 @@ public class BattleUI {
         JLabel descL = new JLabel("<html><font size='3' color=black> "+ c.getDescription() + "</font> <font size='4'color=blue>"+ " (" +c.getCost() + ")" + "</font></html>", JLabel.CENTER);
 
         cardPanel.add(descL, BorderLayout.CENTER);
-
-        JButton x = new JButton("Use");
-        x.addActionListener(new ActionListener() {//this actionlistener erases the card from UI, updates energy, does other card related actions
-            public void actionPerformed(ActionEvent ae) {
-                if(c.getCost()<=player.getEnergy()){
-                    cardsRow.remove(cardPanel);
-                    player.addToDiscard(c);
-                    player.gainEnergy(c.getCost()*-1);
-                    if(c.getCanExhaust()){
-                        player.loseCardDiscard(c);
+        if (usable) {
+            JButton x = new JButton("Use");
+            x.addActionListener(new ActionListener() {//this actionlistener erases the card from UI, updates energy, does other card related actions
+                public void actionPerformed(ActionEvent ae) {
+                    if(c.getCost()<=player.getEnergy()){
+                        cardsRow.remove(cardPanel);
+                        player.addToDiscard(c);
+                        player.gainEnergy(c.getCost()*-1);
+                        if(c.getCanExhaust()){
+                            player.loseCardDiscard(c);
+                        }
+                        if(enemy.checkIfDead()){
+                            RewardUI rewardUI = new RewardUI(player);
+                            enemy.gainHealth(1000);
+                            mainScene.setVisible(false);
+                            mainScene.dispose();
+                            return;
+                        }
+                        player.trySoulChance();
                     }
-                    if(enemy.checkIfDead()){
-                        RewardUI rewardUI = new RewardUI(player);
-                        enemy.gainHealth(1000);
-                        mainScene.setVisible(false);
-                        mainScene.dispose();
-                        return;
-                    }
-                    player.trySoulChance();
+                    updateEntities();
                 }
-                updateEntities();
-            }
-        });
-        x.addActionListener(c.getAction()); //this actionlistener is the specific action in the card
-        cardPanel.add(x, BorderLayout.SOUTH);
+            });
+            x.addActionListener(c.getAction()); //this actionlistener is the specific action in the card
+            cardPanel.add(x, BorderLayout.SOUTH);
+        }
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
                 cardPanel.getBorder(),
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
@@ -363,7 +360,7 @@ public class BattleUI {
         cardsRow.removeAll();
         ArrayList<Card> hand = player.hand;
         for (int i = 0; i < hand.size(); i++) {
-            JPanel x = createCardPanel(hand.get(i));
+            JPanel x = createCardPanel(hand.get(i), true);
             cardsRow.add(x);
             cardsRow.add(Box.createRigidArea(new Dimension(5, 0))); //https://stackoverflow.com/questions/8335997/how-can-i-add-a-space-in-between-two-buttons-in-a-boxlayout
         }

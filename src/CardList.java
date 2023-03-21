@@ -385,18 +385,6 @@ public class CardList {
                 enemy.loseHealth(player.getCritDmg(),CardType.CRIT);
             }
         },true));
-        allCards.add(new Card("Gunpoint", CardType.CRIT, "Deal 5 dmg. crit here.", 1, e -> {
-            if(player.getEnergy()>=1){
-                player.gainCritDmg(1);
-                enemy.loseHealth(player.getCritDmg(),CardType.CRIT);
-            }
-        },true));
-        allCards.add(new Card("Gunpoint", CardType.CRIT, "Deal 5 dmg. crit here.", 1, e -> {
-            if(player.getEnergy()>=1){
-                player.gainCritDmg(1);
-                enemy.loseHealth(player.getCritDmg(),CardType.CRIT);
-            }
-        },true));
         allCards.add(new Card("Dream Nail", CardType.SOUL, "Gain 2 block. Apply 2 fragile. Costs 1 soul", 2, e -> {
             if(player.getEnergy()>=2){
                 player.gainBlock(2);

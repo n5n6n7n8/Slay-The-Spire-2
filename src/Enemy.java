@@ -1,4 +1,11 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
 public abstract class Enemy {
     private int maxHealth;
     private int currentHealth;
@@ -6,6 +13,7 @@ public abstract class Enemy {
     private String name;
     private ArrayList<CardType> immunity = new ArrayList<>();
     private ArrayList<CardType> weakness = new ArrayList<>();
+    private Action nextAction;
 
     //status effect variables
     private int block = 0;
@@ -59,7 +67,48 @@ public abstract class Enemy {
         weakness.add(w);
     }
 
-    public abstract Action action();
+    public abstract Action generateAction();
+    public void setAction(Action a){
+        nextAction = a;
+    }
+    public Action getAction(){
+        return nextAction;
+    }
+    public Icon getLabelOfAction(){
+        System.out.println("GETTING LABEL OF ACTION");
+        BufferedImage bImage = null;
+        String directory = "";
+        ActionType actionT = nextAction.actionType;
+        if(actionT==ActionType.LOSE_HEALTH){
+            directory = "src/CS StS art/intents/attack.png";
+        }
+        else if(actionT==ActionType.GAIN_HEALTH){
+            directory = "src/CS StS art/Hearlth_icon.png";
+        }
+        else if(actionT==ActionType.GAIN_BLOCK){
+            directory = "src/CS StS art/Block_Icon.png";
+        }
+        else if(actionT==ActionType.GAIN_STRENGTH) {
+            directory = "src/CS StS art/intents/buff.png";
+        }
+        else if(actionT==ActionType.INFLICT_FRAIL||actionT==ActionType.INFLICT_WEAK||actionT==ActionType.INFLICT_POISON){
+            directory = "src/CS StS art/intents/debuff.png";
+        }
+
+        try { //https://www.w3schools.com/java/java_try_catch.asp
+            bImage = ImageIO.read(new File(directory));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Image newImage = bImage.getScaledInstance(40, 40, Image.SCALE_DEFAULT);
+        return new ImageIcon(newImage);
+
+    }
+    public Action setAndGetAction(Action a){
+        Action n = nextAction;
+        nextAction = a;
+        return n;
+    }
 
     public void receiveAction(Action a){
         switch(a.actionType){
@@ -71,6 +120,7 @@ public abstract class Enemy {
                 break;
             case GAIN_STRENGTH:
                 gainStrength(a.value);
+                break;
             default:
         }
         if(a.isDual){
@@ -83,6 +133,7 @@ public abstract class Enemy {
                     break;
                 case GAIN_STRENGTH:
                     gainStrength(a.value2);
+                    break;
                 default:
             }
         }
@@ -148,10 +199,10 @@ public abstract class Enemy {
         return fragile;
     }
     public String listStatuses(){
-        String toReturn = "Status Effects: ";
-        if(poison==0&&soul==0&&strength==0&&fragile==0){
-            return toReturn + "NONE";
-        }
+        String toReturn = " ";
+//        if(poison==0&&soul==0&&strength==0&&fragile==0){
+//            return toReturn + "NONE";
+//        }
         if(poison>0){
             toReturn+= "(" + poison + ") Poison,";
         }
