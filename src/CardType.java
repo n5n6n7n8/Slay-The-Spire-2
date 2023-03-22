@@ -14,6 +14,9 @@ public enum CardType { //if time, include orbs mechanic
     SHUFFLE,
     CURSE,
     NONE,
+    STAR,
+    MONEY,
+    SKY,
     SPECIAL;
 
     public Color getColor(CardType ct){ //https://www.w3schools.com/java/java_switch.asp
@@ -30,20 +33,24 @@ public enum CardType { //if time, include orbs mechanic
                 return new Color(146, 122, 207);
             case STRENGTH:
                 return new Color(179, 55, 21);
-            case CRIT:
+            case ENERGY:
                 return new Color(204, 142, 27);
             case HEAL:
                 return new Color(235, 73, 127);
             case FRAGILE:
                 return new Color(22, 204, 156);
-            case ENERGY:
+            case SKY:
                 return new Color(50, 177, 227);
             case SHUFFLE:
                 return new Color(135, 47, 138);
             case CURSE:
                 return new Color(46, 39, 34);
             case SPECIAL:
-                return new Color(217, 211, 46);
+                return new Color(244, 230, 46);
+            case STAR:
+                return new Color(217, 164, 46);
+            case MONEY:
+                return new Color(64, 214, 129);
             default:
                 return new Color(30, 30,30);
 

@@ -14,12 +14,12 @@ public class EnemyList {
             public Action generateAction() {
                 int c = (int) (Math.random()*2);
                 if(c==0){
-                    System.out.println("Enemy attacked for 6!");
+                    System.out.println("Enemy will attack for 6!");
                     System.out.println("---------------------");
                     return new Action(6, ActionType.LOSE_HEALTH, false);
                 }
                 else {
-                    System.out.println("Enemy blocked 4!");
+                    System.out.println("Enemy will block 4!");
                     System.out.println("---------------------");
                     return new Action(4, ActionType.GAIN_BLOCK, false);
                 }
@@ -28,14 +28,14 @@ public class EnemyList {
         allEnemies.add(new Enemy(35, 40, "Greater Slime", CardType.POISON, CardType.NONE) {
             @Override
             public Action generateAction() {
-                int c = (int) (Math.random()*2);
-                if(c==0){
+                int c = (int) (Math.random()*5);
+                if(c<3){
                     System.out.println("Enemy will attack for 9!");
                     System.out.println("---------------------");
                     return new Action(9, ActionType.LOSE_HEALTH, false);
                 }
                 else {
-                    System.out.println("Enemy will block ofr 5!");
+                    System.out.println("Enemy will block for 5!");
                     System.out.println("---------------------");
                     return new Action(5, ActionType.GAIN_BLOCK, false);
                 }
@@ -49,13 +49,13 @@ public class EnemyList {
                 if(c<2){
                     a.setDual(true);
                     a.addDual(14, ActionType.LOSE_HEALTH);
-                    System.out.println("Enemy attacked for 14!");
+                    System.out.println("Enemy will attack for 14!");
                     System.out.println("---------------------");
                 }
                 if(c<5){
                     a.setValue(9);
                     a.setActionType(ActionType.GAIN_BLOCK);
-                    System.out.println("Enemy blocked 9!");
+                    System.out.println("Enemy will block for 9!");
                     System.out.println("---------------------");
                 }
                 else {

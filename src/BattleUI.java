@@ -315,25 +315,39 @@ public class BattleUI {
     public JPanel createCardPanel(Card c, boolean usable){
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
-        cardPanel.setPreferredSize(new Dimension(100, 190));
+        cardPanel.setPreferredSize(new Dimension(140, 190));
         cardPanel.setBorder(BorderFactory.createLineBorder(c.getType().getColor(c.getType()),5)); //https://docs.oracle.com/javase/tutorial/uiswing/components/border.html
-        JLabel titleL = new JLabel("<html>"+c.getTitle() + " (" + c.getType().toString()+")"+"</html>", JLabel.CENTER); //https://docs.oracle.com/javase/7/docs/api/javax/swing/JTextArea.html
+        JLabel titleL = new JLabel("<html><center>"+c.getTitle() + " (" + c.getType().toString()+")"+"</html>"); //https://docs.oracle.com/javase/7/docs/api/javax/swing/JTextArea.html
         titleL.setFont(new Font("Chicago", Font.BOLD,12));
         cardPanel.add(titleL, BorderLayout.NORTH);
 
-        JLabel descL = new JLabel("<html><font size='3' color=black> "+ c.getDescription() + "</font> <font size='4'color=blue>"+ " (" +c.getCost() + ")" + "</font></html>", JLabel.CENTER);
+        JLabel descL = new JLabel("<html><center><font size='3' color=black> "+ c.getDescription() + "</font> <font size='4'color=blue>"+ " (" +c.getCost() + ")" + "</font></html>");
 
         cardPanel.add(descL, BorderLayout.CENTER);
-        if (usable) {
+        if (usable&&!c.isNull) {
             JButton x = new JButton("Use");
             x.addActionListener(new ActionListener() {//this actionlistener erases the card from UI, updates energy, does other card related actions
                 public void actionPerformed(ActionEvent ae) {
                     if(c.getCost()<=player.getEnergy()){
+                        player.cardsPlayed++;
+                        if(c.getType()==CardType.STAR){
+                            player.starCardsPlayed++;
+                        }
                         cardsRow.remove(cardPanel);
                         player.addToDiscard(c);
                         player.gainEnergy(c.getCost()*-1);
                         if(c.getCanExhaust()){
                             player.loseCardDiscard(c);
+                        }
+                        if(c.getDrawNum()!=0){ //if player draws from deck
+                            for (int i = 0; i < c.getDrawNum(); i++) {
+                                Card f = player.drawCard();
+                                cardsRow.add(createCardPanel(f, true));
+                                cardsRow.add(Box.createRigidArea(new Dimension(5, 0)));
+                            }
+                        }
+                        if(c.willAdd){ //if player adds a card to deck
+                            setUpCards();
                         }
                         if(enemy.checkIfDead()){
                             RewardUI rewardUI = new RewardUI(player);
@@ -349,6 +363,7 @@ public class BattleUI {
             });
             x.addActionListener(c.getAction()); //this actionlistener is the specific action in the card
             cardPanel.add(x, BorderLayout.SOUTH);
+            cardPanel.setToolTipText("tEsting 2");
         }
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
                 cardPanel.getBorder(),

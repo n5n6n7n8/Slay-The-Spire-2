@@ -25,19 +25,22 @@ public class RewardUI {
         mainScene.add(rewardTitle, BorderLayout.NORTH);
 
         anotherPanel = new JPanel();
-        anotherPanel.setPreferredSize(new Dimension(100, 100));
+        anotherPanel.setPreferredSize(new Dimension(300, 100));
 
         optionsPanel = new JPanel();
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
-        optionsPanel.setPreferredSize(new Dimension(360, 150));
-        int x = (int) (Math.random()*100)+1;
-        int y = (int) (Math.random()*100)+1;
-        int z = (int) (Math.random()*100)+1;
+        optionsPanel.setPreferredSize(new Dimension(600, 150));
+        int x = (int) (Math.random()*95)+1;
+        int y = (int) (Math.random()*95)+1;
+        int z = (int) (Math.random()*95)+1;
+        int w = (int) (Math.random()*95)+1;
         optionsPanel.add(createCardPanel(cardList.getCard(x),x));
         optionsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         optionsPanel.add(createCardPanel(cardList.getCard(y),y));
         optionsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         optionsPanel.add(createCardPanel(cardList.getCard(z),z));
+        optionsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        optionsPanel.add(createCardPanel(cardList.getCard(w),w));
         optionsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         anotherPanel.add(optionsPanel);
@@ -93,11 +96,11 @@ public class RewardUI {
     }
 
     public static void main(String[] args) {
-//        EnemyList enemyList = new EnemyList();
-//        Enemy enemy = enemyList.getEnemy(2);
-//        Player player = new Player(enemy);
-//
-//        RewardUI x = new RewardUI(player);
+        EnemyList enemyList = new EnemyList();
+        Enemy enemy = enemyList.getEnemy(2);
+        Player player = new Player(enemy);
+
+        RewardUI x = new RewardUI(player);
     }
 }
 

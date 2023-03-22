@@ -6,6 +6,8 @@ public class Player {
     public ArrayList<Card> discardPile;
     private ArrayList<Integer> trueDeckIndexes = new ArrayList<>();
 
+    //public boolean[] unlockedStarCards = new boolean[]{true, true, false, false, false, false, false, false, false, false, false, false, false};
+    public boolean[] unlockedStarCards = new boolean[]{true, true, true, true, true, true, true, true, true, true, true, true, true};
     private int maxHealth;
     private int currentHealth;
     private boolean isDead;
@@ -26,18 +28,22 @@ public class Player {
     private int soul;
     private int soulChance;
     private int strength;
-    private int critChance;
-    private int critDmg;
     private int fragile;
+    private int maxStrength;
 
     //special effects from cards
+    public int floorsCleared;
     public int turnNumber = 1;
     public boolean willKeepBlock;
-    public int boomerangCounter = 0;
     public int infiniteGunDMG = 5;
     public int pileOShields = 4;
     public boolean shepardTone;
     public int misery = 0;
+    public int chargedCreeper=0;
+    public int cardsPlayed=0;
+    public int manaki = 0;
+    public boolean godMode = false;
+    public int starCardsPlayed = 0;
 
 
     CardList cardEncyclopedia;
@@ -70,8 +76,7 @@ public class Player {
         soul = 0;
         soulChance = 14;
         strength = 0;
-        critChance = 12;
-        critDmg = 0;
+        maxStrength = 4;
         fragile = 0;
     }
     //Health Methods
@@ -83,14 +88,15 @@ public class Player {
     }
     public void loseHealth(int toLose){
         int x = toLose;
-        x = (int) (x*(1+(0.20*fragile)));
+        x = (int) (x*(1+(0.15*fragile)));
         //what if enemy has strength?
+
         x-=block;
         if(x<0){
             x=0;
         }
         if(getSoul()<0){
-            x+=(getSoul()/2);
+            x-=(getSoul()/2);
         }
         currentHealth-=x;
         if(currentHealth<0){
@@ -119,7 +125,7 @@ public class Player {
             isDead = true;
         }
         if(currentHealth>maxHealth){
-            maxHealth=x;
+            currentHealth = maxHealth;
         }
     }
     public void gainMaxHealth(int x){
@@ -127,6 +133,10 @@ public class Player {
     }
     public boolean checkIfDead(){
         return isDead;
+    }
+
+    public void gainMaxStrength(int x){
+        maxStrength+=x;
     }
 
     public void gainGold(int i){
@@ -179,24 +189,35 @@ public class Player {
             willKeepBlock = false;
         }
         loseHealthRaw(getPoison());
-        if(poison<0){
+        if(poison>0){
             poison--;
         }
-        if(fragile<0){
+        if(fragile>0){
             fragile--;
         }
-
+        cardsPlayed=0;
         //special effects / relics?
         if(shepardTone){
             loseHealthRaw(1);
         }
-        if(boomerangCounter>0){
-            boomerangCounter--;
-        }
+
         if(misery>0){
             gainBlock(11);
             misery--;
         }
+        if(chargedCreeper>0){
+            if(chargedCreeper==1){
+                loseHealth(5);
+            }
+            chargedCreeper--;
+        }
+        if(manaki>0){
+            if(manaki==1){
+                gainGold(40);
+            }
+            manaki--;
+        }
+        godMode = false;
     }
     public void resetGame(Enemy e){//reset game for new battle
         cardEncyclopedia = new CardList(this, e);
@@ -207,11 +228,12 @@ public class Player {
         block = 0;
         soul = 0;
         strength = 0;
-        critDmg = 0;
+        turnNumber=1;
+
+        floorsCleared++;
 
         //statuses
         willKeepBlock = false;
-        boomerangCounter = 0;
         infiniteGunDMG = 5;
         pileOShields = 4;
         trueDeck = new ArrayList<Card>();
@@ -239,7 +261,7 @@ public class Player {
         if(strength>0){
             toReturn+= "(" + strength + ") Strength,";
         }
-        if(soul>0){
+        if(soul!=0){
             toReturn+= "(" + soul + ") Soul,";
         }
         return toReturn.substring(0, toReturn.length()-1);
@@ -261,8 +283,8 @@ public class Player {
     }
     public void gainSoul(int i){
         soul+=i;
-        if(soul<-6){
-            soul=-6;
+        if(soul<-4){
+            soul=-4;
         }
         if(soul>6){
             soul=6;
@@ -279,14 +301,9 @@ public class Player {
     public void gainStrength(int i){
         strength+=i;
         strength = Math.max(0,strength);
-    }
-    public void gainCritChance(int i){
-        critChance+=i;
-        critChance = Math.max(0,critChance);
-    }
-    public void gainCritDmg(int i){
-        critDmg+=i;
-        critDmg = Math.max(0,critDmg);
+        if(strength>maxStrength){
+            strength = maxStrength;
+        }
     }
     public void gainFragile(int i){
         fragile+=i;
@@ -296,6 +313,9 @@ public class Player {
         }
     }
     public int getEnergy(){
+        if(godMode){
+            return 1000;
+        }
         return energy;
     }
     public int getBlock() {
@@ -309,12 +329,6 @@ public class Player {
     }
     public int getStrength() {
         return strength;
-    }
-    public int getCritChance() {
-        return critChance;
-    }
-    public int getCritDmg() {
-        return critDmg;
     }
     public int getFragile() {
         return fragile;
@@ -388,6 +402,25 @@ public class Player {
             return drawPile.remove(i);
         }
         return null;
+    }
+    public int getValidStarIndex(){//picks a random star card from the ones that are activated
+        int count=0;
+        for (boolean x: unlockedStarCards) {
+            if(x){
+                count++;
+            }
+        }
+        int decision = (int) (Math.random()*count);
+        int count2=0;
+        for (int i = 0; i < unlockedStarCards.length; i++) {
+            if(count2==decision){
+                return i+99;
+            }
+            if(unlockedStarCards[i]){
+                count2++;
+            }
+        }
+        return 0;
     }
 
 
@@ -476,6 +509,17 @@ public class Player {
             }
         }
         return hand;
+    }
+    public Card drawCard(){
+        if(drawPile.size()==0){
+            reShuffle();
+        }
+        if(!drawPile.isEmpty()){
+            Card x = drawPile.remove(0);
+            hand.add(x);
+            return x;
+        }
+        return null;
     }
     public void reShuffle(){
         Collections.shuffle(discardPile);

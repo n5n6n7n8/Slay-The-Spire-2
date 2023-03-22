@@ -27,6 +27,7 @@ public abstract class Enemy {
     //special effect variables (from cards)
     public int poisonChalice = 0;
     public int chargedCreeper = 0;
+    public int boomerangCounter = 0;
 
     //some sort of actions list that says what moves the enemy can do
 
@@ -80,7 +81,7 @@ public abstract class Enemy {
         String directory = "";
         ActionType actionT = nextAction.actionType;
         if(actionT==ActionType.LOSE_HEALTH){
-            directory = "src/CS StS art/intents/attack.png";
+            directory = "src/CS StS art/battle/intents/attack.png";
         }
         else if(actionT==ActionType.GAIN_HEALTH){
             directory = "src/CS StS art/Hearlth_icon.png";
@@ -89,10 +90,10 @@ public abstract class Enemy {
             directory = "src/CS StS art/Block_Icon.png";
         }
         else if(actionT==ActionType.GAIN_STRENGTH) {
-            directory = "src/CS StS art/intents/buff.png";
+            directory = "src/CS StS art/battle/intents/buff.png";
         }
         else if(actionT==ActionType.INFLICT_FRAIL||actionT==ActionType.INFLICT_WEAK||actionT==ActionType.INFLICT_POISON){
-            directory = "src/CS StS art/intents/debuff.png";
+            directory = "src/CS StS art/battle/intents/debuff.png";
         }
 
         try { //https://www.w3schools.com/java/java_try_catch.asp
@@ -285,10 +286,10 @@ public abstract class Enemy {
     public void nextTurn(){
         block = 0;
         loseHealthRaw(poison);
-        if(poison<0){
+        if(poison>0){
             poison--;
         }
-        if(fragile<0){
+        if(fragile>0){
             fragile--;
         }
         if(poisonChalice>0){
@@ -296,6 +297,9 @@ public abstract class Enemy {
                 gainPoison(10);
             }
             poisonChalice--;
+        }
+        if(boomerangCounter>0){
+            boomerangCounter--;
         }
         if(chargedCreeper>0){
             if(chargedCreeper==1){

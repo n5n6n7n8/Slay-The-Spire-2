@@ -7,7 +7,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         Scanner s = new Scanner(System.in);
 
         //Order of Operations for player enemy setup
@@ -27,9 +26,6 @@ public class Main {
         player.gainCardT(13);
         player.gainCardT(5);
         player.gainCardT(14);
-        player.gainCardT(15);
-        player.gainCardT(16);
-        player.gainCardT(17);
 
         BattleUI battleUI = new BattleUI(player, enemy);
 
@@ -55,6 +51,10 @@ class valueTesting{
             x += (int) (Math.random()*6)+1;
             System.out.println(x + "\n");
         }
+        int t = 123456;
+        System.out.println(((t%1000)%1000));
+        System.out.println(t%100);
+        System.out.println(t%10);
 
     }
 }
