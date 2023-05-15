@@ -1,7 +1,5 @@
 import java.awt.*;
-import java.sql.Array;
-import java.util.*;
-import javax.swing.*;
+import java.util.Scanner;
 
 public class Main {
 
@@ -18,14 +16,16 @@ public class Main {
         EnemyList enemyList = new EnemyList();
         Enemy enemy = enemyList.getEnemy(2);
         Player player = new Player(enemy);
-        player.gainCardT(1);
-        player.gainCardT(1);
         player.gainCardT(4);
-        player.gainCardT(2);
-        player.gainCardT(2);
-        player.gainCardT(13);
-        player.gainCardT(5);
-        player.gainCardT(14);
+        player.gainCardT(4);
+        player.gainCardT(4);
+        player.gainCardT(4);
+        player.gainCardT(4);
+        player.gainCardT(8);
+        player.gainCardT(9);
+        player.gainCardT(10);
+        player.gainCardT(12);
+        player.gainCardT(11);
 
         BattleUI battleUI = new BattleUI(player, enemy);
 

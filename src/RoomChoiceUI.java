@@ -53,6 +53,7 @@ public class RoomChoiceUI {
             public void actionPerformed(ActionEvent ae) {
                 EnemyList enemyList = new EnemyList();
                 Enemy enemy = EnemyList.getEnemy(enemyChoice);
+                player.resetGame(enemy);
                 BattleUI x = new BattleUI(player, enemy);
                 mainScene.setVisible(false);
                 mainScene.dispose();

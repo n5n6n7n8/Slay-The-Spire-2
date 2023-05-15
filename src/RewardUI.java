@@ -29,11 +29,11 @@ public class RewardUI {
 
         optionsPanel = new JPanel();
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
-        optionsPanel.setPreferredSize(new Dimension(600, 150));
-        int x = (int) (Math.random()*95)+1;
-        int y = (int) (Math.random()*95)+1;
-        int z = (int) (Math.random()*95)+1;
-        int w = (int) (Math.random()*95)+1;
+        optionsPanel.setPreferredSize(new Dimension(600, 250));
+        int x = (int) (Math.random()*3)+1;
+        int y = (int) (Math.random()*4)+1;
+        int z = (int) (Math.random()*5)+1;
+        int w = (int) (Math.random()*6)+1;
         optionsPanel.add(createCardPanel(cardList.getCard(x),x));
         optionsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         optionsPanel.add(createCardPanel(cardList.getCard(y),y));
@@ -71,15 +71,20 @@ public class RewardUI {
     }
     public JPanel createCardPanel(Card c, int index){
         JPanel cardPanel = new JPanel();
+        JPanel surroundingPanel = new JPanel();
+        surroundingPanel.setLayout(new BoxLayout(surroundingPanel, BoxLayout.Y_AXIS));
         cardPanel.setLayout(new BorderLayout());
-        cardPanel.setPreferredSize(new Dimension(100, 140));
+        cardPanel.setPreferredSize(new Dimension(140, 210));
         cardPanel.setBorder(BorderFactory.createLineBorder(c.getType().getColor(c.getType()),5)); //https://docs.oracle.com/javase/tutorial/uiswing/components/border.html
-        JLabel titleL = new JLabel("<html>"+c.getTitle() + ", " + c.getType().toString()+"</html>", JLabel.CENTER); //https://docs.oracle.com/javase/7/docs/api/javax/swing/JTextArea.html
+        JLabel titleL = new JLabel("<html><center>"+c.getTitle() + " (" + c.getType().toString()+")"+"</html>"); //https://docs.oracle.com/javase/7/docs/api/javax/swing/JTextArea.html
+        titleL.setFont(new Font("Chicago", Font.BOLD,12));
         cardPanel.add(titleL, BorderLayout.NORTH);
+        JLabel descL = new JLabel("<html><center><font size='3' color=black> "+ c.getDescription() + "</font> <font size='4'color=blue>"+ " (" +c.getCost() + ")" + "</font></html>");
 
-        JLabel descL = new JLabel("<html>"+ c.getDescription() + " Cost: " + c.getCost() + "</html>", JLabel.CENTER); //https://stackoverflow.com/questions/2420742/make-a-jlabel-wrap-its-text-by-setting-a-max-width
-        descL.setFont(new Font("Serif", Font.PLAIN, 12));
-        cardPanel.add(descL, BorderLayout.CENTER);
+        surroundingPanel.add(new JLabel(c.cardArt));
+        surroundingPanel.add(descL);
+
+        cardPanel.add(surroundingPanel);
 
         JButton x = new JButton("Choose");
         x.addActionListener(new ActionListener() {//this actionlistener will permanently add the card to the player's deck

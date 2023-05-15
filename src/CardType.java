@@ -7,7 +7,6 @@ public enum CardType { //if time, include orbs mechanic
     POISON,
     SOUL,
     STRENGTH,
-    CRIT,
     HEAL,
     FRAGILE,
     ENERGY,

@@ -27,7 +27,7 @@ public class BattleUI {
         mainScene = new JFrame("Battle Scene"); //Main Scene
 
 
-        mainScene.setPreferredSize(new Dimension(800, 600));
+        mainScene.setPreferredSize(new Dimension(900, 600));
         mainScene.pack();
         centerScene = new JPanel(); //Panels on all areas of MainScene
         centerScene.setLayout(new BorderLayout());
@@ -52,7 +52,6 @@ public class BattleUI {
                 cardMap.setPreferredSize(new Dimension(500, 600));
                 cardMap.pack();
                 cardMap.getContentPane().setBackground(new Color(245, 241, 206));
-
                 JButton closeButton = new JButton("Close");
                 closeButton.addActionListener(ae1 -> {
                     cardMap.setVisible(false);
@@ -314,16 +313,20 @@ public class BattleUI {
 
     public JPanel createCardPanel(Card c, boolean usable){
         JPanel cardPanel = new JPanel();
+        JPanel surroundingPanel = new JPanel();
+        surroundingPanel.setLayout(new BoxLayout(surroundingPanel, BoxLayout.Y_AXIS));
         cardPanel.setLayout(new BorderLayout());
-        cardPanel.setPreferredSize(new Dimension(140, 190));
+        cardPanel.setPreferredSize(new Dimension(140, 250));
         cardPanel.setBorder(BorderFactory.createLineBorder(c.getType().getColor(c.getType()),5)); //https://docs.oracle.com/javase/tutorial/uiswing/components/border.html
         JLabel titleL = new JLabel("<html><center>"+c.getTitle() + " (" + c.getType().toString()+")"+"</html>"); //https://docs.oracle.com/javase/7/docs/api/javax/swing/JTextArea.html
         titleL.setFont(new Font("Chicago", Font.BOLD,12));
         cardPanel.add(titleL, BorderLayout.NORTH);
-
         JLabel descL = new JLabel("<html><center><font size='3' color=black> "+ c.getDescription() + "</font> <font size='4'color=blue>"+ " (" +c.getCost() + ")" + "</font></html>");
 
-        cardPanel.add(descL, BorderLayout.CENTER);
+        surroundingPanel.add(new JLabel(c.cardArt));
+        surroundingPanel.add(descL);
+
+        cardPanel.add(surroundingPanel);
         if (usable&&!c.isNull) {
             JButton x = new JButton("Use");
             x.addActionListener(new ActionListener() {//this actionlistener erases the card from UI, updates energy, does other card related actions
@@ -363,7 +366,6 @@ public class BattleUI {
             });
             x.addActionListener(c.getAction()); //this actionlistener is the specific action in the card
             cardPanel.add(x, BorderLayout.SOUTH);
-            cardPanel.setToolTipText("tEsting 2");
         }
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
                 cardPanel.getBorder(),

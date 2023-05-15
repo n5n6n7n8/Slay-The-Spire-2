@@ -242,6 +242,8 @@ public class Player {
         }
        //https://howtodoinjava.com/java/collections/arraylist/arraylist-clone-deep-copy/
         drawPile = (ArrayList<Card>) trueDeck.clone();
+        hand.clear();
+        discardPile.clear();
         Collections.shuffle(drawPile);
         drawCards();
     }
