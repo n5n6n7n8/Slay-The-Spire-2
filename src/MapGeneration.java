@@ -50,10 +50,31 @@ public class MapGeneration {
         for (int i = 0; i < 7; i++) { //rest sites at the top
             map[0][i].eventType = EventType.REST;
         }
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 14; i++) {
             for (int j = 0; j < 7; j++) {
-
+                if(map[i][j].eventType==EventType.TEMP){
+                    int c = (int) (Math.random()*100);
+                    if(c>=55){
+                        map[i][j].eventType = EventType.ENEMY;
+                    }
+                    else if(c>=33){
+                        map[i][j].eventType = EventType.QUESTION;
+                    }
+                    else if(c>=17){
+                        map[i][j].eventType = EventType.REST;
+                    }
+                    else if(c>=5){
+                        map[i][j].eventType = EventType.SHOP;
+                    }
+                    else{
+                        map[i][j].eventType = EventType.CHEST;
+                    }
+                }
             }
+        }
+        for (int i = 0; i < 7; i++) { //rest sites at the top
+            if(map[14][i].eventType==EventType.TEMP)
+            map[14][i].eventType = EventType.ENEMY;
         }
 
     }
