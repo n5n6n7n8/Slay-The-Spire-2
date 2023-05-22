@@ -29,17 +29,22 @@ public class MapGeneration {
             map[i][startIndex].eventType = EventType.TEMP;
             int c = (int) (Math.random()*3);
             if(c==0){ //decides where to go next //left
+                if(!map[i][startIndex].connections.contains(map[i-1][Math.abs(startIndex-1)]))
                 map[i][startIndex].connections.add(map[i-1][Math.abs(startIndex-1)]);
                 startIndex = Math.abs(startIndex-1);//even if start index is 0, the path moves to the right
             }
             else if(c==1){//middle
+                if(!map[i][startIndex].connections.contains(map[i-1][startIndex]))
                 map[i][startIndex].connections.add(map[i-1][startIndex]);
+
             }
             else{//right
                 if(startIndex==6){
+                    if(!map[i][startIndex].connections.contains(map[i-1][startIndex]))
                     map[i][startIndex].connections.add(map[i-1][startIndex]);//if all the way right, stay straight
                 }
                 else{
+                    if(!map[i][startIndex].connections.contains(map[i-1][startIndex+1]))
                     map[i][startIndex].connections.add(map[i-1][startIndex+1]);
                     startIndex++;
                 }
@@ -54,20 +59,23 @@ public class MapGeneration {
             for (int j = 0; j < 7; j++) {
                 if(map[i][j].eventType==EventType.TEMP){
                     int c = (int) (Math.random()*100);
+                    if(i>9){
+                        c = (int) (Math.random()*72) + 28;
+                    }
                     if(c>=55){
                         map[i][j].eventType = EventType.ENEMY;
                     }
                     else if(c>=33){
                         map[i][j].eventType = EventType.QUESTION;
                     }
-                    else if(c>=17){
-                        map[i][j].eventType = EventType.REST;
-                    }
-                    else if(c>=5){
+                    else if(c>=28){
                         map[i][j].eventType = EventType.SHOP;
                     }
+                    else if(c>=16&&i!=1){
+                        map[i][j].eventType = EventType.REST;
+                    }
                     else{
-                        map[i][j].eventType = EventType.CHEST;
+                        map[i][j].eventType = EventType.ELITE;
                     }
                 }
             }
@@ -76,6 +84,11 @@ public class MapGeneration {
             if(map[14][i].eventType==EventType.TEMP)
             map[14][i].eventType = EventType.ENEMY;
         }
+        for (int i = 0; i < 7; i++) { //rest sites at the top
+            if(map[6][i].eventType!=EventType.EMPTY)
+                map[6][i].eventType = EventType.CHEST;
+        }
+
 
     }
     public void printMap(){
